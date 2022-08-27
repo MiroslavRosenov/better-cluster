@@ -12,4 +12,5 @@ def setup_logging():
 
 if __name__ == "__main__":
     setup_logging()
+    cluster = Cluster()
     asyncio.run(cluster.start())
