@@ -1,8 +1,6 @@
-import logging
 from quart import Quart
 from discord.ext import cluster
 
-logging.basicConfig(level=logging.INFO)
 app = Quart(__name__)
 ipc = cluster.Client()
 

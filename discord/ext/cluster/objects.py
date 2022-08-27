@@ -1,4 +1,4 @@
-from typing import Dict, Any, Optional, Union
+from typing import Dict, Any, Optional, Union, Tuple
 
 class ClientPayload:
     """|class|
@@ -15,7 +15,7 @@ class ClientPayload:
         The payload to be converted.
     """
 
-    __slots__ = ("payload", "length", "endpoint", "data")
+    __slots__: Tuple[str] = ("payload", "lenght", "endpoint", "data")
 
     def __init__(self, payload: Dict[str, Union[str, Any]]):
         self.payload = payload
@@ -42,13 +42,10 @@ class ClientPayload:
     def raw(self) -> Dict:
         return self.payload
 
-    @property
-    def bot(self) -> Optional[int]:
-        """Returns the bot which the endpoint was used."""
-        return self.payload.get("__bot__")
-
     def items(self):
         """|method|
+
         Returns the payload in the form of dictionary items.
+
         """
         return self.payload.items()

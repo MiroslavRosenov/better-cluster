@@ -1,36 +1,30 @@
-# Better IPC
+# Better Cluster
 
-<a href="https://pypi.org/project/better-ipc/" target="_blank"><img src="https://img.shields.io/pypi/v/better-ipc"></a>
-<img src="https://img.shields.io/pypi/pyversions/better-ipc">
-<img src="https://img.shields.io/github/last-commit/MiroslavRosenov/better-ipc">
-<img src="https://img.shields.io/github/license/MiroslavRosenov/better-ipc">
-<a href="https://discord.gg/Rpg7zjFYsh" target="_blank"><img src="https://img.shields.io/discord/875005644594372638?label=discord"></a>
+## A high-performance inter-process communication library designed to handle communication between multiple bots/web applications
 
-## High-performance inter-process communication library designed to work with the latest version of [discord.py](https://github.com/Rapptz/discord.py)
+<img src="https://raw.githubusercontent.com/MiroslavRosenov/better-cluster/main/images/banner.png">
 
-<img src="https://raw.githubusercontent.com/MiroslavRosenov/better-ipc/main/banner.png">
-
-This library is heavily based on [discord-ext-ipc](https://github.com/Ext-Creators/discord-ext-ipc), which is no longer maintained.
+#### This library is made to handle mulltiple discord clients. If you want something simpler or have only one client, check out [better-ipc](https://github.com/MiroslavRosenov/better-ipc)
 
 # Installation
 > ### Stable version
 #### For Linux
 ```shell
-python3 -m pip install -U better-ipc
+python3 -m pip install -U better-cluster
 ```
 #### For Windows
 ```shell
-py -m pip install -U better-ipc
+py -m pip install -U better-cluster
 ```
 
 > ### Development version
 #### For Linux
 ```shell
-python3 -m pip install -U git+https://github.com/MiroslavRosenov/better-ipc
+python3 -m pip install -U git+https://github.com/MiroslavRosenov/better-cluster
 ```
 #### For Windows
 ```shell
-py -m pip install -U git+https://github.com/MiroslavRosenov/better-ipc
+py -m pip install -U git+https://github.com/MiroslavRosenov/better-cluster
 ```
 
 
@@ -40,14 +34,23 @@ You can join the support server [here](https://discord.gg/Rpg7zjFYsh)
 
 # Examples
 
-### Client example
+## Example of a cluster
 ```python
+import asyncio
+from discord.ext.cluster import Cluster
+
+if __name__ == "__main__":
+    cluster = Cluster()
+    asyncio.run(cluster.start())
+```
+
+## Example of a shard
+```python
+import asyncio
 import discord
 
-from typing import Dict
-from discord.ext import commands, ipc
-from discord.ext.ipc.server import Server
-from discord.ext.ipc.objects import ClientPayload
+from discord.ext.cluster import Shard, ClientPayload
+from discord.ext import commands
 
 class MyBot(commands.Bot):
     def __init__(self) -> None:
@@ -55,64 +58,37 @@ class MyBot(commands.Bot):
 
         super().__init__(
             command_prefix="$.",
-            intents=intents,
+            intents=intents
         )
 
-        self.ipc = ipc.Server(self, secret_key="🐼")
+        self.shard = Shard(self, shard_id=1)
 
     async def setup_hook(self) -> None:
-        await self.ipc.start()
+        await self.shard.connect()
 
-    @Server.route()
-    async def get_user_data(self, data: ClientPayload) -> Dict:
+    @Shard.route(shard_id=1)
+    async def get_user_data(self, data: ClientPayload):
         user = self.get_user(data.user_id)
         return user._to_minimal_user_json()
+
+if __name__ == '__main__':
+    bot = MyBot()
+    asyncio.run(bot.run(...))
 ```
 
 
-### Cog example
-```python
-from typing import Dict
-from discord.ext import commands, ipc
-from discord.ext.ipc.server import Server
-from discord.ext.ipc.errors import IPCError
-from discord.ext.ipc.objects import ClientPayload
-
-class Routes(commands.Cog):
-    def __init__(self, bot: commands.Bot):
-        self.bot = bot
-        if not hasattr(bot, "ipc"):
-            bot.ipc = ipc.Server(self.bot, secret_key="🐼")
-    
-    async def cog_load(self) -> None:
-        await self.bot.ipc.start()
-
-    async def cog_unload(self) -> None:
-        await self.bot.ipc.stop()
-        self.bot.ipc = None
-
-    @Server.route()
-    async def get_user_data(self, data: ClientPayload) -> Dict:
-        user = self.bot.get_user(data.user_id)
-        return user._to_minimal_user_json()
-
-async def setup(bot):
-    await bot.add_cog(Routes(bot))
-```
-
-
-### Inside your web application
+## Example of web client
 ```python
 from quart import Quart
-from discord.ext.ipc import Client
+from discord.ext import cluster
 
 app = Quart(__name__)
-ipc = Client(secret_key="🐼")
+ipc = cluster.Client()
 
 @app.route('/')
 async def main():
-    return await ipc.request("get_user_data", user_id=383946213629624322)
+    return await ipc.request("get_user_data", 1, user_id=383946213629624322)
 
 if __name__ == '__main__':
-    app.run()
+    app.run(port=8000, debug=True)
 ```

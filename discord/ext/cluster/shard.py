@@ -8,6 +8,7 @@ from websockets.client import connect
 from discord.ext.commands import Bot, Cog
 from discord.ext.cluster.errors import NotConnected
 from discord.ext.cluster.objects import ClientPayload
+from websockets.server import WebSocketServerProtocol
 from websockets.exceptions import InvalidHandshake, ConnectionClosed
 from typing import TYPE_CHECKING, Any, Tuple, Optional, Callable, TypeVar, Dict, Union, Type
 
@@ -39,7 +40,7 @@ class Shard:
         Used for authentication when handling requests.
     """
 
-    __slots__ = ("bot", "shard_id", "host", "port", "secret_key", "logger")
+    __slots__: Tuple[str] = ("bot", "shard_id", "host", "port", "secret_key", "logger", "websocket", "task")
 
     endpoints: Dict[str, Tuple[Union[int, str], RouteFunc]] = {}
 
@@ -57,6 +58,8 @@ class Shard:
         self.port = port
         self.secret_key = secret_key
         self.logger = logging.getLogger("discord.ext.cluster")
+        self.websocket: WebSocketServerProtocol = None
+        self.task: asyncio.Task = None
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} connected={self.connected}>"
@@ -126,7 +129,7 @@ class Shard:
         async with connect(
             self.base_url + "/return_response",
             extra_headers={
-                "Secret-Key": str(self.secret_key).encode("UTF-8"),
+                "Secret-Key": str(self.secret_key),
                 "UUID": request["uuid"]
             }
         ) as ws:
@@ -153,7 +156,7 @@ class Shard:
             self.websocket = await connect(
                 self.base_url + "/initialize_shard", 
                 extra_headers={
-                    "Secret-Key": bytes(str(self.secret_key), "UTF-8"),
+                    "Secret-Key": str(self.secret_key),
                     "Shard-ID": self.shard_id,
                 }
             )

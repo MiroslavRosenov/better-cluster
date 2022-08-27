@@ -26,7 +26,7 @@ class Cluster:
         Used for authentication when handling requests.
     """
 
-    __slots__ = ("host", "port", "secret_key", "logger", "shards", "waiters", "handlers")
+    __slots__: Tuple[str] = ("host", "port", "secret_key", "logger", "shards", "waiters", "handlers")
 
     def __init__(
         self,
@@ -48,8 +48,13 @@ class Cluster:
             "/return_response": self.return_response
         }
 
+    def is_secure(self, websocket: WebSocketServerProtocol) -> bool:
+        if (key := websocket.request_headers.get("Secret-Key")):
+            return str(key) == str(self.secret_key)
+        return bool(self.secret_key is None)
+
     async def initialize_shard(self, websocket: WebSocketServerProtocol, message: Union[str, bytes]) -> None:
-        if websocket.request_headers.get("Secret-Key") is bytes(str(self.secret_key), "UTF-8"):
+        if not self.is_secure(websocket):
             return await websocket.send(
                 json.dumps({
                     "error": "Invalid secret key!",
@@ -104,7 +109,7 @@ class Cluster:
             self.logger.info(f"Shard {id!r} has been connected!")
 
     async def disconnect_shard(self, websocket: WebSocketServerProtocol, message: Union[str, bytes]) -> None:
-        if websocket.request_headers.get("Secret-Key") is bytes(str(self.secret_key), "UTF-8"):
+        if not self.is_secure(websocket):
             return await websocket.send(
                 json.dumps({
                     "error": "Invalid secret key!",
@@ -141,7 +146,7 @@ class Cluster:
         self.logger.warning(f"Shard {id!r} has been disconnected manually")
 
     async def create_request(self, websocket: WebSocketServerProtocol, message: Union[str, bytes]) -> None:
-        if websocket.request_headers.get("Secret-Key") is bytes(str(self.secret_key), "UTF-8"):
+        if not self.is_secure(websocket):
             return await websocket.send(
                 json.dumps({
                     "error": "Invalid secret key!",
@@ -178,7 +183,7 @@ class Cluster:
             )
 
         else:
-            ID = uuid4()
+            ID = str(uuid4())
 
             await shard[0].send(json.dumps({
                 "endpoint": endpoint,
@@ -189,7 +194,7 @@ class Cluster:
             self.waiters[ID] = websocket
 
     async def return_response(self, websocket: WebSocketServerProtocol, message: Union[str, bytes]) -> None:
-        if websocket.request_headers.get("Secret-Key") is bytes(str(self.secret_key), "UTF-8"):
+        if not self.is_secure(websocket):
             return await websocket.send(
                 json.dumps({
                     "error": "Invalid secret key!",

@@ -9,12 +9,12 @@ with open("requirements.txt") as stream:
     requirements = [x for x in raw if not x.startswith("git+")]
     dependencies = [x for x in raw if x.startswith("git+")]
 
-long_description = (Path(__file__).parent / "README.md").read_text(encoding="utf8")
+long_description = (Path(__file__).parent / "README.md").read_text(encoding="UTF-8")
 
 _version_re = re.compile(r'__version__\s+=\s+(.*)')
 
 with open('discord/ext/cluster/__init__.py', 'rb') as f:
-    version = str(ast.literal_eval(_version_re.search(f.read().decode('utf-8')).group(1)))
+    version = str(ast.literal_eval(_version_re.search(f.read().decode('UTF-8')).group(1)))
 
 setuptools.setup(
     author="DaPandaOfficial",

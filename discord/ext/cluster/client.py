@@ -5,7 +5,7 @@ import logging
 import logging
 from types import TracebackType
 
-from typing import Any, Dict, Optional, Union, Type
+from typing import Any, Dict, Optional, Union, Type, Tuple
 from websockets.client import connect
 
 class Client:
@@ -23,7 +23,7 @@ class Client:
         The authentication that is used when communicating with the cluster
     """
 
-    __slots__ = ("host", "port", "secret_key", "logger")
+    __slots__: Tuple[str] = ("host", "port", "secret_key", "logger")
 
     def __init__(
         self,
@@ -68,7 +68,7 @@ class Client:
         async with connect(
             self.base_url + "/create_request", 
             extra_headers={
-                "Secret-Key": bytes(str(self.secret_key), "UTF-8"),
+                "Secret-Key": str(self.secret_key),
                 "Shard-ID": shard_id,
             }
         ) as ws:
