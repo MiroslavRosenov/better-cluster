@@ -160,7 +160,7 @@ class Shard:
                     "Shard-ID": self.shard_id,
                 }
             )
-        except InvalidHandshake:
+        except (ConnectionRefusedError, InvalidHandshake):
             return self.logger.critical("Failed to connect to the cluster!")
         else:
             await self.websocket.send(

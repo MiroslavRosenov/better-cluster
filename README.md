@@ -7,11 +7,11 @@
 <img src="https://img.shields.io/github/license/MiroslavRosenov/better-cluster">
 <a href="https://discord.gg/Rpg7zjFYsh" target="_blank"><img src="https://img.shields.io/discord/875005644594372638?label=discord"></a>
 
-## A high-performance inter-process communication library designed to handle communication between multiple bots/web applications
+## A high-performance inter-process communication library designed to handle communication between multiple shards
 
 <img src="https://raw.githubusercontent.com/MiroslavRosenov/better-cluster/main/images/banner.png">
 
-#### This library is made to handle mulltiple discord clients. If you want something simpler or have only one client, check out [better-ipc](https://github.com/MiroslavRosenov/better-ipc)
+#### This library is made to handle multiple discord clients. If you want something simpler or have only one client, check out [better-ipc](https://github.com/MiroslavRosenov/better-ipc)
 
 # Installation
 > ### Stable version
@@ -44,7 +44,10 @@ You can join the support server [here](https://discord.gg/Rpg7zjFYsh)
 ## Example of a cluster
 ```python
 import asyncio
+import logging
 from discord.ext.cluster import Cluster
+
+logging.basicConfig(level=logging.INFO)
 
 if __name__ == "__main__":
     cluster = Cluster()
@@ -55,9 +58,16 @@ if __name__ == "__main__":
 ```python
 import asyncio
 import discord
+import logging
 
 from discord.ext.cluster import Shard, ClientPayload
 from discord.ext import commands
+
+logging.basicConfig(level=logging.INFO)
+
+logging.getLogger("discord.http").disabled = True
+logging.getLogger("discord.client").disabled = True
+logging.getLogger("discord.gateway").disabled = True
 
 class MyBot(commands.Bot):
     def __init__(self) -> None:

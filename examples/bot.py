@@ -1,8 +1,15 @@
 import asyncio
 import discord
+import logging
 
 from discord.ext.cluster import Shard, ClientPayload
 from discord.ext import commands
+
+logging.basicConfig(level=logging.INFO)
+
+logging.getLogger("discord.http").disabled = True
+logging.getLogger("discord.client").disabled = True
+logging.getLogger("discord.gateway").disabled = True
 
 class MyBot(commands.Bot):
     def __init__(self) -> None:

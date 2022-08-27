@@ -3,7 +3,7 @@ Better Cluster
 ~~~~~~~~~~~~~~~~~~~
 
 A high-performance inter-process communication library designed 
-to handle communication between multiple bots/web applications
+to handle communication between multiple shards
 
 :copyright: (c) 2022-present DaPandaOfficial
 :license: MIT, see LICENSE for more details.
