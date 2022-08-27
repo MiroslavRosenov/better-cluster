@@ -1,13 +1,7 @@
 import ast
 import re
-
 import setuptools
 from pathlib import Path
-
-with open("requirements.txt") as stream:
-    raw = stream.read().splitlines()
-    requirements = [x for x in raw if not x.startswith("git+")]
-    dependencies = [x for x in raw if x.startswith("git+")]
 
 long_description = (Path(__file__).parent / "README.md").read_text(encoding="UTF-8")
 
@@ -19,11 +13,12 @@ with open('discord/ext/cluster/__init__.py', 'rb') as f:
 setuptools.setup(
     author="DaPandaOfficial",
     python_requires=">=3.8.0",
-    license="Apache Software License",
+    license="MIT License",
     author_email="miroslav.rosenov39@gmail.com",
     long_description_content_type="text/markdown",
+    description="A high-performance inter-process communication library designed to handle communication between multiple shards",
+    long_description=long_description,
     url="https://github.com/MiroslavRosenov/better-cluster",
-    description="A high-performance inter-process communication library designed to work with the latest version of discord.py",
     packages=[
         "discord.ext.cluster"
     ],
@@ -35,7 +30,7 @@ setuptools.setup(
         "Development Status :: 5 - Production/Stable",
         "Framework :: AsyncIO",
         "Intended Audience :: Developers",
-        "License :: OSI Approved :: Apache Software License",
+        "License :: OSI Approved :: MIT License",
         "Natural Language :: English",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
@@ -49,9 +44,6 @@ setuptools.setup(
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
     keywords=["better-cluster", "cluster", "python", "discord.py"],
-    long_description=long_description,
-    install_requires=requirements,
-    dependencies=dependencies,
     name="better-cluster",
     version=version,
 )
