@@ -173,6 +173,10 @@ class Shard:
             if message["code"] == 200:
                 self.task = asyncio.Task(self.wait_for_requests())
                 self.logger.info("Successfully connected to the cluster!")
+                if self.bot.is_ready():
+                    self.bot.dispatch("ipc_ready")
+                else:
+                    asyncio.create_task(self.wait_bot_is_ready())
 
     async def disconnect(self) -> None:
         """|coro|
@@ -193,3 +197,7 @@ class Shard:
             await self.websocket.close()
         else:
             raise NotConnected
+
+    async def wait_bot_is_ready(self) -> None:
+        await self.bot.wait_until_ready()
+        self.bot.dispatch("ipc_ready")
