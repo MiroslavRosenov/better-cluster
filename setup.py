@@ -50,6 +50,7 @@ setuptools.setup(
         "python", 
         "discord.py"
     ],
+    long_description_content_type="text/markdown",
     install_requires=requirements,
     python_requires=">=3.8.0",
     project_urls={
