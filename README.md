@@ -44,7 +44,10 @@ You can join the support server [here](https://discord.gg/Rpg7zjFYsh)
 ## Example of a cluster
 ```python
 import asyncio
+import logging
 from discord.ext.cluster import Cluster
+
+logging.basicConfig(level=logging.INFO)
 
 if __name__ == "__main__":
     cluster = Cluster()
@@ -55,9 +58,16 @@ if __name__ == "__main__":
 ```python
 import asyncio
 import discord
+import logging
 
 from discord.ext.cluster import Shard, ClientPayload
 from discord.ext import commands
+
+logging.basicConfig(level=logging.INFO)
+
+logging.getLogger("discord.http").disabled = True
+logging.getLogger("discord.client").disabled = True
+logging.getLogger("discord.gateway").disabled = True
 
 class MyBot(commands.Bot):
     def __init__(self) -> None:
