@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 import logging
-import logging
 from types import TracebackType
 
 from typing import Any, Dict, Optional, Union, Type, Tuple
