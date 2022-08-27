@@ -7,11 +7,11 @@
 <img src="https://img.shields.io/github/license/MiroslavRosenov/better-cluster">
 <a href="https://discord.gg/Rpg7zjFYsh" target="_blank"><img src="https://img.shields.io/discord/875005644594372638?label=discord"></a>
 
-## A high-performance inter-process communication library designed to handle communication between multiple bots/web applications
+## A high-performance inter-process communication library designed to handle communication between multiple shards
 
 <img src="https://raw.githubusercontent.com/MiroslavRosenov/better-cluster/main/images/banner.png">
 
-#### This library is made to handle mulltiple discord clients. If you want something simpler or have only one client, check out [better-ipc](https://github.com/MiroslavRosenov/better-ipc)
+#### This library is made to handle multiple discord clients. If you want something simpler or have only one client, check out [better-ipc](https://github.com/MiroslavRosenov/better-ipc)
 
 # Installation
 > ### Stable version
